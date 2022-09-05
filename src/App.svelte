@@ -61,34 +61,34 @@
 	parseCSV()
 </script>
 
-<main class="w-screen h-screen">
-	<div class="w-full h-full grid grid-cols-[2fr,1fr]">
-		<div class="grid grid-rows-[2fr,3fr] gap-4 p-4">
-			<div class="flex flex-col">
-				<p class="flex-none text-lg">Paste your CSV here:</p>
-				<div class="flex-grow">
-					<textarea
-						class="w-full h-full resize-none block rounded-md text-sm font-mono p-2 text-slate-900 border border-slate-900/60 dark:border-slate-50/60 transition-colors"
-						bind:value={rawCSV}
-						on:keyup={parseCSV}
-					/>
-				</div>
+<main class="w-screen h-screen grid grid-cols-2 relative">
+	<div class="p-4 h-full max-h-screen grid grid-rows-[1fr,3fr]">
+		<div>
+			<p class="text-lg leading-[2rem]">Paste your CSV here:</p>
+			<div class="h-48">
+				<textarea
+					class="w-full h-full resize-none block rounded-md text-sm font-mono p-2 text-slate-900 border border-slate-900/30 dark:border-slate-50/30 transition-colors"
+					bind:value={rawCSV}
+					on:keyup={parseCSV}
+				/>
 			</div>
+		</div>
 
-			<div class="overflow-y-scroll">
-				{#if data.length > 0}
-					<table
-						class="w-full overflow-hidden shadow-lg dark:shadow-none border border-slate-900"
-					>
-						<thead class="text-left">
-							<tr class="bg-sky-800">
-								{#each headers as header}
-									<th class="text-lg p-1">
-										<div class="text-white">{header}</div>
+		<div class="mt-4 overflow-y-scroll rounded-md">
+			{#if data.length > 0}
+				<table class="relative w-full">
+					<thead class="text-left sticky top-0">
+						<tr class="bg-sky-800">
+							{#each headers as header}
+								<th>
+									<div class="text-white px-2 pt-2">
+										{header}
+									</div>
+									<div class="px-2 pb-2 mt-2">
 										<select
 											bind:value={types[header]}
 											on:change={updateRoot}
-											class="font-normal block w-full py-1 bg-slate-50 dark:bg-slate-900 transition-colors"
+											class="font-normal block w-full py-1 bg-slate-50 dark:bg-slate-900 transition-colors rounded-sm text-sm"
 										>
 											<option value={null} disabled
 												>Select a type</option
@@ -97,66 +97,80 @@
 												<option value={ty}>{ty}</option>
 											{/each}
 										</select>
-									</th>
+									</div>
+								</th>
+							{/each}
+						</tr>
+					</thead>
+					<tbody>
+						{#each data as row}
+							<tr
+								class="odd:bg-slate-100 even:bg-slate-200 dark:odd:bg-slate-700 dark:even:bg-slate-800 transition-colors"
+							>
+								{#each headers as header}
+									<td class="px-2 py-1">{row[header]}</td>
 								{/each}
 							</tr>
-						</thead>
-						<tbody>
-							{#each data as row}
-								<tr
-									class="odd:bg-slate-100 even:bg-slate-200 dark:odd:bg-slate-700 dark:even:bg-slate-800 transition-colors"
-								>
-									{#each headers as header}
-										<td class="px-2 py-1">{row[header]}</td>
-									{/each}
-								</tr>
-							{/each}
-						</tbody>
-					</table>
-				{/if}
-			</div>
+						{/each}
+					</tbody>
+				</table>
+			{/if}
+		</div>
+	</div>
+
+	<div
+		class="space-y-6 p-4 bg-slate-300 dark:bg-slate-600 transition-colors sticky top-0"
+	>
+		<div class="bg-sky-800 text-white p-4 rounded-md">
+			<label class="block font-bold" for="legend-key-select">
+				Legend key:
+			</label>
+			<select
+				id="legend-key-select"
+				bind:value={legendKey}
+				on:change={updateRoot}
+				class="text-base font-normal block w-full py-2 px-2 bg-slate-50 mt-2 rounded-md text-slate-900"
+			>
+				<option value={null}>No key</option>
+				{#each headers as header}
+					<option value={header}>{header}</option>
+				{/each}
+			</select>
 		</div>
 
-		<div class="space-y-6 p-4 bg-sky-900 text-white">
-			<div class="bg-slate-900/50 p-4 rounded-md">
-				<label class="block font-bold" for="legend-key-select">
-					Legend key:
-				</label>
-				<select
-					id="legend-key-select"
-					bind:value={legendKey}
-					on:change={updateRoot}
-					class="text-base font-normal block w-full py-2 px-2 bg-slate-50 mt-2 rounded-md text-slate-900"
-				>
-					<option value={null}>No key</option>
-					{#each headers as header}
-						<option value={header}>{header}</option>
-					{/each}
-				</select>
-			</div>
-
-			<div>
-				<div class="font-bold">Root</div>
+		<div class="overflow-x-hidden w-full">
+			<div class="font-bold">Root</div>
+			<div
+				class="bg-slate-50 text-slate-900 max-h-48 overflow-y-scroll rounded-md"
+			>
 				<div
-					class="text-sm font-mono select-all whitespace-pre mt-1 py-4 px-2 overflow-x-hidden bg-slate-50 text-slate-900 rounded-md"
+					class="text-sm font-mono select-all whitespace-pre mt-1 p-2"
 				>
 					{root}
 				</div>
 			</div>
+		</div>
 
-			<div>
-				<div class="font-bold">Leaves</div>
+		<div class="overflow-x-hidden w-full">
+			<div class="font-bold">Leaves</div>
+			<div
+				class="bg-slate-50 text-slate-900 max-h-48 overflow-y-scroll rounded-md"
+			>
 				<div
-					class="text-sm font-mono select-all whitespace-pre mt-1 py-4 px-2 overflow-x-hidden bg-slate-50 text-slate-900 rounded-md"
+					class="text-sm font-mono select-all whitespace-pre mt-1 p-2"
 				>
 					{JSON.stringify(leaves, null, "  ")}
 				</div>
 			</div>
+		</div>
 
-			<div>
-				<div class="font-bold">Legend</div>
+		<div class="overflow-x-hidden w-full">
+			<div class="font-bold">Legend</div>
+			<div
+				class="bg-slate-50 text-slate-900 max-h-48 overflow-y-scroll rounded-md"
+			>
 				<div
-					class="text-sm font-mono select-all whitespace-pre mt-1 py-4 px-2 overflow-x-hidden bg-slate-50 text-slate-900 rounded-md"
+					class="text-sm font-mono select-all whitespace-pre mt-1 p-2"
 				>
 					{JSON.stringify(legend, null, "  ")}
 				</div>
