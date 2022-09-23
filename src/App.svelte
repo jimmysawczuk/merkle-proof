@@ -4,7 +4,7 @@
 	import { MerkleTree } from "merkletreejs"
 	import "buffer"
 
-	const availableTypes = ["address", "uint256", "uint64"]
+	const availableTypes = ["IGNORE", "address", "uint256", "uint64"]
 
 	let rawCSV = ``
 
@@ -28,12 +28,20 @@
 		const leaves = []
 		const leg = []
 
-		const ty = headers.map((header) => {
-			return types[header]
-		})
+		const ty = headers
+			.map((header) => {
+				return types[header]
+			})
+			.filter((v) => v !== "IGNORE")
 
 		for (const row of data) {
-			const r = headers.map((header) => row[header])
+			const r = headers
+				.map((header) => {
+					if (types[header] === "IGNORE") return null
+					return row[header]
+				})
+				.filter((v) => v !== null)
+
 			const leaf = ethers.utils.solidityKeccak256(ty, r)
 			leaves.push(leaf)
 			leg.push({
