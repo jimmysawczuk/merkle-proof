@@ -10,11 +10,15 @@
 
 	let data = []
 	let headers = []
-	let types = {}
+	let types = {
+		address: "address",
+	}
 
 	let tree = null
 	let legend = null
 	let legendKey = null
+	let normalizeCase = false
+
 	$: root = tree?.getHexRoot() ?? null
 	$: leaves = tree?.getHexLeaves() ?? null
 
@@ -38,6 +42,10 @@
 			const r = headers
 				.map((header) => {
 					if (types[header] === "IGNORE") return null
+
+					if (types[header] === "address")
+						row[header] = caseNormalized(row[header])
+
 					return row[header]
 				})
 				.filter((v) => v !== null)
@@ -61,9 +69,17 @@
 
 		const tbr = {}
 		for (const row of entries) {
-			tbr[row[legendKey]] = row
+			tbr[caseNormalized(row[legendKey])] = row
 		}
 		return tbr
+	}
+
+	function caseNormalized(s) {
+		if (!normalizeCase) {
+			return s
+		}
+
+		return `${s}`.toLowerCase()
 	}
 
 	parseCSV()
@@ -129,21 +145,38 @@
 	<div
 		class="space-y-6 p-4 bg-slate-300 dark:bg-slate-600 transition-colors sticky top-0"
 	>
-		<div class="bg-sky-800 text-white p-4 rounded-md">
-			<label class="block font-bold" for="legend-key-select">
-				Legend key:
-			</label>
-			<select
-				id="legend-key-select"
-				bind:value={legendKey}
-				on:change={updateRoot}
-				class="text-base font-normal block w-full py-2 px-2 bg-slate-50 mt-2 rounded-md text-slate-900"
-			>
-				<option value={null}>No key</option>
-				{#each headers as header}
-					<option value={header}>{header}</option>
-				{/each}
-			</select>
+		<div class="bg-sky-800 text-white p-4 rounded-md space-y-4">
+			<div>
+				<label class="block font-bold" for="legend-key-select">
+					Legend key:
+				</label>
+				<select
+					id="legend-key-select"
+					bind:value={legendKey}
+					on:change={updateRoot}
+					class="text-base font-normal block w-full py-2 px-2 bg-slate-50 mt-2 rounded-md text-slate-900"
+				>
+					<option value={null}>No key</option>
+					{#each headers as header}
+						<option value={header}>{header}</option>
+					{/each}
+				</select>
+			</div>
+
+			<div>
+				<label
+					class="block font-bold select-none"
+					for="normalize-case-checkbox"
+				>
+					Lowercase addresses:
+				</label>
+				<input
+					type="checkbox"
+					bind:checked={normalizeCase}
+					on:change={parseCSV}
+					id="normalize-case-checkbox"
+				/>
+			</div>
 		</div>
 
 		<div class="overflow-x-hidden w-full">
