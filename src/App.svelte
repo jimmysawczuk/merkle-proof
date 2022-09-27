@@ -206,6 +206,26 @@
 		</div>
 
 		<div class="overflow-x-hidden w-full">
+			<div class="font-bold">Combined</div>
+			<div
+				class="bg-slate-50 text-slate-900 max-h-48 overflow-y-scroll rounded-md"
+			>
+				<div
+					class="text-sm font-mono select-all whitespace-pre mt-1 p-2"
+				>
+					{JSON.stringify(
+						{
+							merkleRoot: root,
+							leaves,
+						},
+						null,
+						"  "
+					)}
+				</div>
+			</div>
+		</div>
+
+		<div class="overflow-x-hidden w-full">
 			<div class="font-bold">Legend</div>
 			<div
 				class="bg-slate-50 text-slate-900 max-h-48 overflow-y-scroll rounded-md"
