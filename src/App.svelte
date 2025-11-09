@@ -86,9 +86,9 @@
 </script>
 
 <main class="w-screen h-screen grid grid-cols-2 relative">
-	<div class="p-4 h-full max-h-screen grid grid-rows-[1fr,3fr]">
+	<div class="p-4 h-full max-h-screen grid grid-rows-[1fr_3fr]">
 		<div>
-			<p class="text-lg leading-[2rem]">Paste your CSV here:</p>
+			<p class="text-lg leading-8">Paste your CSV here:</p>
 			<div class="h-48">
 				<textarea
 					class="w-full h-full resize-none block rounded-md text-sm font-mono p-2 text-slate-900 border border-slate-900/30 dark:border-slate-50/30 transition-colors"
@@ -112,7 +112,7 @@
 										<select
 											bind:value={types[header]}
 											on:change={updateRoot}
-											class="font-normal block w-full py-1 bg-slate-50 dark:bg-slate-900 transition-colors rounded-sm text-sm"
+											class="font-normal block w-full py-1 bg-slate-50 dark:bg-slate-900 transition-colors rounded-xs text-sm"
 										>
 											<option value={null} disabled
 												>Select a type</option
