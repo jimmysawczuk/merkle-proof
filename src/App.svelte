@@ -91,7 +91,7 @@
 			<p class="text-lg leading-8">Paste your CSV here:</p>
 			<div class="h-48">
 				<textarea
-					class="w-full h-full resize-none block rounded-md text-sm font-mono p-2 text-slate-900 border border-slate-900/30 dark:border-slate-50/30 transition-colors"
+					class="w-full h-full resize-none block rounded-md text-sm font-mono p-2 text-slate-900 dark:text-slate-50 border border-slate-900/30 dark:border-slate-50/30 transition-colors"
 					bind:value={rawCSV}
 					on:keyup={parseCSV}
 				/>
@@ -219,7 +219,7 @@
 							leaves,
 						},
 						null,
-						"  "
+						"  ",
 					)}
 				</div>
 			</div>
