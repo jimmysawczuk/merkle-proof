@@ -1,35 +1,35 @@
 <script>
 	import { csvParse } from "d3"
-	import { ethers } from "ethers"
+	import { keccak256, solidityPackedKeccak256 } from "ethers"
 	import { MerkleTree } from "merkletreejs"
 	import "buffer"
 
 	const availableTypes = ["IGNORE", "address", "uint256", "uint64"]
 
-	let rawCSV = ``
+	let rawCSV = $state(``)
 
-	let data = []
-	let headers = []
-	let types = {
+	let data = $state([])
+	let headers = $state([])
+	let types = $state({
 		address: "address",
-	}
+	})
 
-	let tree = null
-	let legend = null
-	let legendKey = null
-	let normalizeCase = false
+	let tree = $state(null)
+	let legend = $state(null)
+	let legendKey = $state(null)
+	let normalizeCase = $state(false)
 
-	$: root = tree?.getHexRoot() ?? null
-	$: leaves = tree?.getHexLeaves() ?? null
+	let root = $derived(tree?.getHexRoot() ?? null)
+	let leaves = $derived(tree?.getHexLeaves() ?? null)
 
-	async function parseCSV() {
+	function parseCSV() {
 		data = csvParse(rawCSV)
 		headers = data.columns
 		updateRoot()
 	}
 
 	function updateRoot() {
-		const leaves = []
+		const leafHashes = []
 		const leg = []
 
 		const ty = headers
@@ -50,15 +50,15 @@
 				})
 				.filter((v) => v !== null)
 
-			const leaf = ethers.utils.solidityKeccak256(ty, r)
-			leaves.push(leaf)
+			const leaf = solidityPackedKeccak256(ty, r)
+			leafHashes.push(leaf)
 			leg.push({
 				...row,
 				hash: leaf,
 			})
 		}
 
-		tree = new MerkleTree(leaves, ethers.utils.keccak256, { sort: true })
+		tree = new MerkleTree(leafHashes, keccak256, { sort: true })
 		legend = buildLegend(leg)
 	}
 
@@ -93,8 +93,8 @@
 				<textarea
 					class="w-full h-full resize-none block rounded-md text-sm font-mono p-2 text-slate-900 dark:text-slate-50 border border-slate-900/30 dark:border-slate-50/30 transition-colors"
 					bind:value={rawCSV}
-					on:keyup={parseCSV}
-				/>
+					onkeyup={parseCSV}
+				></textarea>
 			</div>
 		</div>
 
@@ -111,7 +111,7 @@
 									<div class="px-2 pb-2 mt-2">
 										<select
 											bind:value={types[header]}
-											on:change={updateRoot}
+											onchange={updateRoot}
 											class="font-normal block w-full py-1 bg-slate-50 dark:bg-slate-900 transition-colors rounded-xs text-sm"
 										>
 											<option value={null} disabled
@@ -153,7 +153,7 @@
 				<select
 					id="legend-key-select"
 					bind:value={legendKey}
-					on:change={updateRoot}
+					onchange={updateRoot}
 					class="text-base font-normal block w-full py-2 px-2 bg-slate-50 mt-2 rounded-md text-slate-900"
 				>
 					<option value={null}>No key</option>
@@ -173,7 +173,7 @@
 				<input
 					type="checkbox"
 					bind:checked={normalizeCase}
-					on:change={parseCSV}
+					onchange={parseCSV}
 					id="normalize-case-checkbox"
 				/>
 			</div>
