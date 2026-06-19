@@ -11,7 +11,7 @@
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^5.1.1",
     "svelte": "5.55.7",
-    "vite": "7.3.2"
+    "vite": "7.3.5"
   },
   "dependencies": {
     "@tailwindcss/postcss": "^4.1.17",
